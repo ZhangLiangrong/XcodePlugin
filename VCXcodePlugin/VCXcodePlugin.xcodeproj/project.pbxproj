@@ -61,6 +61,7 @@
 		1C3455FB1ADE26A40081B46E /* VCXcodePlugin */ = {
 			isa = PBXGroup;
 			children = (
+				1CE9042E1AE6107C006B741F /* FileInterface */,
 				1CC599FF1ADF657000FE1C8B /* Command */,
 				1C3455FC1ADE26A40081B46E /* Supporting Files */,
 				1C0A33541ADE510000DD9023 /* VCXcodePlugin.h */,
@@ -86,6 +87,13 @@
 				1C3E18E91ADF83D700BE8850 /* DeallocCommond.m */,
 			);
 			path = Command;
+			sourceTree = "<group>";
+		};
+		1CE9042E1AE6107C006B741F /* FileInterface */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = FileInterface;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

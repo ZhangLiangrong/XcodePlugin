@@ -12,6 +12,7 @@
 
 @implementation VCXcodePlugin
 
+
 + (void) pluginDidLoad: (NSBundle*) plugin
 {
     NSLog(@"VCXcodePlugin load");
@@ -96,16 +97,16 @@
         //先把@dealloc去掉
         [textString replaceCharactersInRange:NSMakeRange(text.selectedRange.location - deallocCommand.length, deallocCommand.length) withString:@""];
         NSRange usedRange = NSMakeRange(text.selectedRange.location - deallocCommand.length, text.selectedRange.length);
-        NSString *deallocString = [DeallocCommond deallocString:textString];
+        NSString *deallocString = [DeallocCommond deallocString:textString currentLocation:usedRange.location];
         if([deallocString length] > 0){
             if(textString.length > usedRange.location){
                 [textString insertString:deallocString atIndex:usedRange.location];
             }else{
                 [textString appendString:deallocString];
             }
-            text.string = textString;
-            text.selectedRange = usedRange;
         }
+        text.string = textString;
+        text.selectedRange = usedRange;
         return YES;
     }
     return NO;

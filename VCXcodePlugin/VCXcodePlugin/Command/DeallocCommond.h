@@ -10,6 +10,6 @@
 
 @interface DeallocCommond : NSObject
 
-+(NSString*)deallocString:(NSString*)textString;
++(NSString*)deallocString:(NSString*)textString currentLocation:(NSInteger)currentLocation;
 
 @end
