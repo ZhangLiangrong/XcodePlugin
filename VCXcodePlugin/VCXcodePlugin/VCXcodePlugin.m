@@ -29,6 +29,11 @@
     return instance;
 }
 
+-(void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 - (id)init {
     if (self = [super init]) {
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -66,9 +71,7 @@
     NSMutableString *textString = [NSMutableString stringWithFormat:@"%@",text.string];
     if([textString length] >0 && text.selectedRange.location >= formatCommand.length && [[textString substringWithRange:NSMakeRange(text.selectedRange.location - formatCommand.length, formatCommand.length)] isEqualToString:formatCommand]){
         NSRange usedRange = text.selectedRange;
-        //先把@format去掉
         [textString replaceCharactersInRange:NSMakeRange(text.selectedRange.location - formatCommand.length, formatCommand.length) withString:@""];
-        //取前面30个字符串，接着还原这个位置
         NSInteger length = 30;
         NSInteger start = (NSInteger)usedRange.location - length - formatCommand.length;
         if(start <= 0){
@@ -94,7 +97,6 @@
     NSString *deallocCommand = @"@dealloc";
     NSMutableString *textString = [NSMutableString stringWithFormat:@"%@",text.string];
     if([textString length] >0 && text.selectedRange.location >= deallocCommand.length && [[textString substringWithRange:NSMakeRange(text.selectedRange.location - deallocCommand.length, deallocCommand.length)] isEqualToString:deallocCommand]){
-        //先把@dealloc去掉
         [textString replaceCharactersInRange:NSMakeRange(text.selectedRange.location - deallocCommand.length, deallocCommand.length) withString:@""];
         NSRange usedRange = NSMakeRange(text.selectedRange.location - deallocCommand.length, text.selectedRange.length);
         NSString *deallocString = [DeallocCommond deallocString:textString currentLocation:usedRange.location];
