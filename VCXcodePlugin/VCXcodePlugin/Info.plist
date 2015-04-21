@@ -28,7 +28,7 @@
 		<string>9F75337B-21B4-4ADC-B558-F9CADF7073A7</string>
 	</array>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2015年 ___Company Name___. All rights reserved.</string>
+	<string>Copyright © 2015___Company Name___. All rights reserved.</string>
 	<key>NSPrincipalClass</key>
 	<string>VCXcodePlugin</string>
 	<key>XC4Compatible</key>

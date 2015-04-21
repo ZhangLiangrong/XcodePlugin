@@ -3,11 +3,12 @@
 //  VCXcodePlugin
 //
 //  Created by Vic Zhang on 15/4/11.
-//  Copyright (c) 2015年 ___Company Name___. All rights reserved.
+//  Copyright (c) 2015 ___Company Name___. All rights reserved.
 //
 
 #import "DeallocCommond.h"
 #import "FormatCommand.h"
+#import "FileSearchHelper.h"
 
 @implementation DeallocCommond
 
@@ -42,37 +43,93 @@
     }
     return nil;
 }
++(NSArray*)importHeaderArrayForString:(NSString*)textString
+{
+    NSMutableArray *headersArray = [NSMutableArray array];
+    NSRange interfaceRange = [textString rangeOfString:@"@interface"];
+    NSRange implementRange = [textString rangeOfString:@"@implementation"];
+    NSInteger findStart = 0;
+    NSInteger max = MIN(textString.length,MIN(interfaceRange.location, implementRange.location));
+    while(findStart < max){
+        NSRange importRange = [textString rangeOfString:@"#import" options:NSCaseInsensitiveSearch range:NSMakeRange(findStart, max - findStart)];
+        if(importRange.location != NSNotFound){
+            NSRange endRange = [textString rangeOfString:@"\n" options:NSCaseInsensitiveSearch range:NSMakeRange(importRange.location + importRange.length, max - importRange.location - importRange.length)];
+            NSRange leftRange = [textString rangeOfString:@"\"" options:NSCaseInsensitiveSearch range:NSMakeRange(importRange.location + importRange.length, max - importRange.location - importRange.length)];
+            if(leftRange.location != NSNotFound){
+                NSRange rightRange = [textString rangeOfString:@"\"" options:NSCaseInsensitiveSearch range:NSMakeRange(leftRange.location + leftRange.length, max - leftRange.location - leftRange.length)];
+                if(leftRange.location != NSNotFound && rightRange.location != NSNotFound ){
+                    if(rightRange.location > endRange.location || leftRange.location > endRange.location){
+                        findStart = endRange.location + endRange.length;
+                        continue;
+                    }
+                    NSString *file = [textString substringWithRange:NSMakeRange(leftRange.location + leftRange.length, rightRange.location - leftRange.location - leftRange.length)];
+                    [headersArray addObject:file];
+                    findStart = rightRange.location + rightRange.length;
+                    continue;
+                }
+            }else{
+                findStart = endRange.location + endRange.length;
+                continue;
+            }
+        }
+        break;
+    }
+    return headersArray;
+}
 
 +(NSString*)deallocString:(NSString*)textString currentLocation:(NSInteger)currentLocation
 {
     NSMutableString *resultString = [NSMutableString string];
     NSMutableArray *allPropertyArray = [NSMutableArray array];
     NSMutableArray *allVarArray = [NSMutableArray array];
-    NSInteger location = 0;
     NSString *implementationName = [self implementationNameForString:textString end:currentLocation];
-    NSLog(@"implementationName Name = %@",implementationName);
     if([implementationName length] > 0){
-        while (location < textString.length) {
-            NSRange interfaceRange = [textString rangeOfString:@"@interface" options:NSCaseInsensitiveSearch range:NSMakeRange(location, textString.length - location)];
-            NSRange endRange = [textString rangeOfString:@"@end" options:NSCaseInsensitiveSearch range:NSMakeRange(location, textString.length - location)];
-            NSString *findInterfaceName = [self interfaceNameForString:textString location:interfaceRange.location + interfaceRange.length end:endRange.location];
-            NSLog(@"findInterfaceName Name = %@",findInterfaceName);
-            if([findInterfaceName isEqualToString:implementationName] && interfaceRange.location != NSNotFound && endRange.location != NSNotFound && endRange.location > interfaceRange.location + interfaceRange.length){
-                NSInteger findStart = interfaceRange.location + interfaceRange.length + 1;
-                NSArray *propertyArray = [self findPropertyArray:textString location:findStart end:endRange.location];
-                [allPropertyArray addObjectsFromArray:propertyArray];
-                NSArray *varArray = [self findVarArray:textString location:findStart end:endRange.location];
-                [allVarArray addObjectsFromArray:varArray];
+        [self generatePropertyAndVarArrayForTextString:textString implementationName:implementationName savePropertyArray:allPropertyArray saveVarArray:allVarArray];
+        NSArray *headerArray = [self importHeaderArrayForString:textString];
+        NSArray *searchContentArray = [FileSearchHelper searchWorkspaceForFiles:headerArray];
+        if(searchContentArray.count > 0){
+            for(NSString *textString in searchContentArray){
+                [self generatePropertyAndVarArrayForTextString:textString implementationName:implementationName savePropertyArray:allPropertyArray saveVarArray:allVarArray];
             }
-            location = endRange.location + endRange.length;
         }
+        [self removeVarArrayFromExitedPropertyArray:allPropertyArray varArray:allVarArray];
         NSString *newCode = [self generateDeallocCodeForPropertyArray:allPropertyArray varArray:allVarArray interfaceName:implementationName];
         if(newCode.length > 0){
             [resultString appendString:newCode];
         }
-
     }
     return resultString;
+}
+
++(void)removeVarArrayFromExitedPropertyArray:(NSMutableArray*)propertyArray varArray:(NSMutableArray*)varArray
+{
+    for(NSInteger i = varArray.count - 1; i>= 0 ; i--){
+        NSString *var = [varArray objectAtIndex:i];
+        for(NSString *property in propertyArray){
+            if([property isEqualToString:var] || [[NSString stringWithFormat:@"_%@",property] isEqualToString:var]){
+                [varArray removeObjectAtIndex:i];
+                break;
+            }
+        }
+    }
+}
+
++(void)generatePropertyAndVarArrayForTextString:(NSString*)textString implementationName:(NSString*)implementationName savePropertyArray:(NSMutableArray*)allPropertyArray saveVarArray:(NSMutableArray*)allVarArray
+{
+    NSInteger location = 0;
+    while (location < textString.length) {
+        NSRange interfaceRange = [textString rangeOfString:@"@interface" options:NSCaseInsensitiveSearch range:NSMakeRange(location, textString.length - location)];
+        NSRange endRange = [textString rangeOfString:@"@end" options:NSCaseInsensitiveSearch range:NSMakeRange(location, textString.length - location)];
+        NSString *findInterfaceName = [self interfaceNameForString:textString location:interfaceRange.location + interfaceRange.length end:endRange.location];
+        if([findInterfaceName isEqualToString:implementationName] && interfaceRange.location != NSNotFound && endRange.location != NSNotFound && endRange.location > interfaceRange.location + interfaceRange.length){
+            NSInteger findStart = interfaceRange.location + interfaceRange.length + 1;
+            NSArray *propertyArray = [self findPropertyArray:textString location:findStart end:endRange.location];
+            [allPropertyArray addObjectsFromArray:propertyArray];
+            NSArray *varArray = [self findVarArray:textString location:findStart end:endRange.location];
+            [allVarArray addObjectsFromArray:varArray];
+        }
+        location = endRange.location + endRange.length;
+    }
 }
 
 +(NSArray*)findVarArray:(NSString*)textString location:(NSInteger)findStart end:(NSInteger)end
@@ -147,7 +204,7 @@
 +(NSString*)generateDeallocCodeForPropertyArray:(NSArray*)propertyArray varArray:(NSArray*)varArray interfaceName:(NSString*)interfaceName
 {
     if(propertyArray.count > 0  || varArray.count > 0){
-        NSMutableString *code = [NSMutableString stringWithFormat:@"/**\n*\tInterface %@ dealloc\n*/\n-(void)dealloc\n{\n#if !__has_feature(objc_arc)",interfaceName];
+        NSMutableString *code = [NSMutableString stringWithFormat:@"/**\n* Interface %@ dealloc\n*/\n-(void)dealloc\n{\n#if !__has_feature(objc_arc)",interfaceName];
         if(varArray.count > 0){
             [code appendString:@"\n\t//This is member variables release, please check !!!!!!"];
             for(NSString *var in varArray){

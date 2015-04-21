@@ -3,10 +3,13 @@
 //  VCXcodePlugin
 //
 //  Created by Vic Zhang on 15/4/16.
-//  Copyright (c) 2015年 ___Company Name___. All rights reserved.
+//  Copyright (c) 2015 ___Company Name___. All rights reserved.
 //
 
 #import "FormatCommand.h"
+
+@interface FormatCommand()
+@end
 
 @implementation FormatCommand
 
@@ -48,7 +51,6 @@
     return resultString;
 }
 
-//过滤一些已经带有NSLocalizedString，或者objectForKey，keyPath之类的，以后可以继续添加
 +(BOOL)filterStringWithLocation:(NSInteger)location textString:(NSString*)textString
 {
     NSArray *filterKeyWord = [NSArray arrayWithObjects:@"NSLog(",@"NSLocalizedString(",@"NSLocalizedStringFromTable(",@"NSLocalizedStringFromTableInBundle(",@"NSLocalizedStringWithDefaultValue(",@"objectForKey:",@"forKey:",@"forKeyPath:", nil];

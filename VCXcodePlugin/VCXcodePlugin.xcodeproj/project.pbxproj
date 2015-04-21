@@ -12,6 +12,7 @@
 		1CA1054B1ADE28ED007B4F81 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CA1054A1ADE28ED007B4F81 /* AppKit.framework */; };
 		1CA1054D1ADE2909007B4F81 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CA1054C1ADE2909007B4F81 /* Foundation.framework */; };
 		1CC59A021ADF658200FE1C8B /* FormatCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CC59A011ADF658200FE1C8B /* FormatCommand.m */; };
+		1CCB41841AE6226E00A51DA1 /* FileSearchHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CCB41831AE6226E00A51DA1 /* FileSearchHelper.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +26,8 @@
 		1CA1054C1ADE2909007B4F81 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1CC59A001ADF658200FE1C8B /* FormatCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormatCommand.h; sourceTree = "<group>"; };
 		1CC59A011ADF658200FE1C8B /* FormatCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FormatCommand.m; sourceTree = "<group>"; };
+		1CCB41821AE6226E00A51DA1 /* FileSearchHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSearchHelper.h; sourceTree = "<group>"; };
+		1CCB41831AE6226E00A51DA1 /* FileSearchHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSearchHelper.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +95,8 @@
 		1CE9042E1AE6107C006B741F /* FileInterface */ = {
 			isa = PBXGroup;
 			children = (
+				1CCB41821AE6226E00A51DA1 /* FileSearchHelper.h */,
+				1CCB41831AE6226E00A51DA1 /* FileSearchHelper.m */,
 			);
 			path = FileInterface;
 			sourceTree = "<group>";
@@ -165,6 +170,7 @@
 				1C3E18EA1ADF83D700BE8850 /* DeallocCommond.m in Sources */,
 				1CC59A021ADF658200FE1C8B /* FormatCommand.m in Sources */,
 				1C0A33561ADE510000DD9023 /* VCXcodePlugin.m in Sources */,
+				1CCB41841AE6226E00A51DA1 /* FileSearchHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
