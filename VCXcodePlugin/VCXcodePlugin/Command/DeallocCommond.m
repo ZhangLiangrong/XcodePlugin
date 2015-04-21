@@ -26,7 +26,7 @@
     NSRange lastFind = NSMakeRange(NSNotFound, 0);
     NSInteger findStart = 0;
     while(findStart < end){
-        NSRange implementationRange = [textString rangeOfString:@"@implementation" options:NSCaseInsensitiveSearch range:NSMakeRange(findStart,end)];
+        NSRange implementationRange = [textString rangeOfString:@"@implementation" options:NSCaseInsensitiveSearch range:NSMakeRange(findStart,end - findStart)];
         findStart = implementationRange.location + implementationRange.length;
         if(implementationRange.location != NSNotFound){
             lastFind = implementationRange;
@@ -122,17 +122,17 @@
     BOOL isFind = NO;
     NSInteger location = 0;
     NSString *findInterfaceName = nil;
-    while (location < textString.length) {
+    while (location < textString.length && !isFind) {
         NSRange interfaceRange = [textString rangeOfString:@"@interface" options:NSCaseInsensitiveSearch range:NSMakeRange(location, textString.length - location)];
         NSRange endRange = [textString rangeOfString:@"@end" options:NSCaseInsensitiveSearch range:NSMakeRange(location, textString.length - location)];
         findInterfaceName = [self interfaceNameForString:textString location:interfaceRange.location + interfaceRange.length end:endRange.location];
-        if([findInterfaceName isEqualToString:implementationName] && interfaceRange.location != NSNotFound && endRange.location != NSNotFound && endRange.location > interfaceRange.location + interfaceRange.length){
+        isFind = [findInterfaceName isEqualToString:implementationName];
+        if(isFind  && interfaceRange.location != NSNotFound && endRange.location != NSNotFound && endRange.location > interfaceRange.location + interfaceRange.length){
             NSInteger findStart = interfaceRange.location + interfaceRange.length + 1;
             NSArray *propertyArray = [self findPropertyArray:textString location:findStart end:endRange.location];
             [allPropertyArray addObjectsFromArray:propertyArray];
             NSArray *varArray = [self findVarArray:textString location:findStart end:endRange.location];
             [allVarArray addObjectsFromArray:varArray];
-            isFind = YES;
         }
         location = endRange.location + endRange.length;
     }
