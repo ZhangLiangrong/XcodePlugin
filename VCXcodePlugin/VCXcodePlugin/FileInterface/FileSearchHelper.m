@@ -39,13 +39,15 @@ static NSMutableArray *searchFileArray = nil;
         [self searchFolder:currentWorkspaceFolder forFiles:fileNameArray];
         if([searchFileArray count] > 0){
             for(NSString *path in searchFileArray){
-                NSError *error = nil;
-                NSString *content = [[NSString alloc] initWithContentsOfFile:path encoding:NSUTF8StringEncoding error:&error];
-                if(error != nil){
-                    break;
-                }
-                if([content length] > 0){
-                    [textStringArray addObject:content];
+                @autoreleasepool {
+                    NSError *error = nil;
+                    NSString *content = [[NSString alloc] initWithContentsOfFile:path encoding:NSUTF8StringEncoding error:&error];
+                    if(error != nil){
+                        break;
+                    }
+                    if([content length] > 0){
+                        [textStringArray addObject:content];
+                    }
                 }
             }
         }

@@ -121,10 +121,11 @@
 {
     BOOL isFind = NO;
     NSInteger location = 0;
+    NSString *findInterfaceName = nil;
     while (location < textString.length) {
         NSRange interfaceRange = [textString rangeOfString:@"@interface" options:NSCaseInsensitiveSearch range:NSMakeRange(location, textString.length - location)];
         NSRange endRange = [textString rangeOfString:@"@end" options:NSCaseInsensitiveSearch range:NSMakeRange(location, textString.length - location)];
-        NSString *findInterfaceName = [self interfaceNameForString:textString location:interfaceRange.location + interfaceRange.length end:endRange.location];
+        findInterfaceName = [self interfaceNameForString:textString location:interfaceRange.location + interfaceRange.length end:endRange.location];
         if([findInterfaceName isEqualToString:implementationName] && interfaceRange.location != NSNotFound && endRange.location != NSNotFound && endRange.location > interfaceRange.location + interfaceRange.length){
             NSInteger findStart = interfaceRange.location + interfaceRange.length + 1;
             NSArray *propertyArray = [self findPropertyArray:textString location:findStart end:endRange.location];
