@@ -89,7 +89,10 @@
         NSArray *searchContentArray = [FileSearchHelper searchWorkspaceForFiles:headerArray];
         if(searchContentArray.count > 0){
             for(NSString *textString in searchContentArray){
-                [self generatePropertyAndVarArrayForTextString:textString implementationName:implementationName savePropertyArray:allPropertyArray saveVarArray:allVarArray];
+                BOOL isFind = [self generatePropertyAndVarArrayForTextString:textString implementationName:implementationName savePropertyArray:allPropertyArray saveVarArray:allVarArray];
+                if(isFind){
+                    break;
+                }
             }
         }
         [self removeVarArrayFromExitedPropertyArray:allPropertyArray varArray:allVarArray];
@@ -114,8 +117,9 @@
     }
 }
 
-+(void)generatePropertyAndVarArrayForTextString:(NSString*)textString implementationName:(NSString*)implementationName savePropertyArray:(NSMutableArray*)allPropertyArray saveVarArray:(NSMutableArray*)allVarArray
++(BOOL)generatePropertyAndVarArrayForTextString:(NSString*)textString implementationName:(NSString*)implementationName savePropertyArray:(NSMutableArray*)allPropertyArray saveVarArray:(NSMutableArray*)allVarArray
 {
+    BOOL isFind = NO;
     NSInteger location = 0;
     while (location < textString.length) {
         NSRange interfaceRange = [textString rangeOfString:@"@interface" options:NSCaseInsensitiveSearch range:NSMakeRange(location, textString.length - location)];
@@ -127,9 +131,11 @@
             [allPropertyArray addObjectsFromArray:propertyArray];
             NSArray *varArray = [self findVarArray:textString location:findStart end:endRange.location];
             [allVarArray addObjectsFromArray:varArray];
+            isFind = YES;
         }
         location = endRange.location + endRange.length;
     }
+    return isFind;
 }
 
 +(NSArray*)findVarArray:(NSString*)textString location:(NSInteger)findStart end:(NSInteger)end
@@ -200,11 +206,10 @@
     }
     return propertyArray;
 }
-
 +(NSString*)generateDeallocCodeForPropertyArray:(NSArray*)propertyArray varArray:(NSArray*)varArray interfaceName:(NSString*)interfaceName
 {
     if(propertyArray.count > 0  || varArray.count > 0){
-        NSMutableString *code = [NSMutableString stringWithFormat:@"/**\n* Interface %@ dealloc\n*/\n-(void)dealloc\n{\n#if !__has_feature(objc_arc)",interfaceName];
+        NSMutableString *code = [NSMutableString stringWithFormat:@"/**\n * Interface %@ dealloc\n */\n-(void)dealloc\n{\n#if !__has_feature(objc_arc)",interfaceName];
         if(varArray.count > 0){
             [code appendString:@"\n\t//This is member variables release, please check !!!!!!"];
             for(NSString *var in varArray){
@@ -220,7 +225,7 @@
             [code appendString:@"\n"];
         }
         [code appendString:@"\n\t[super dealloc];\n"];
-        [code appendString:@"#endif\n}\n\n"];
+        [code appendString:@"#endif\n}\n"];
         return code;
     }
     return nil;
