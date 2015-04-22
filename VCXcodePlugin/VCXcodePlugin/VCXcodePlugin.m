@@ -9,6 +9,7 @@
 #import "VCXcodePlugin.h"
 #import "FormatCommand.h"
 #import "DeallocCommond.h"
+#import "KeyboradHelper.h"
 
 @implementation VCXcodePlugin
 
@@ -56,13 +57,28 @@
 {
     if([notification.object isKindOfClass:[NSTextView class]]){
         NSTextView *text = notification.object;
-        if([self computeFormatCommnad:text]){
+        if([self isCurrentLineIsOnlyText:@"@format" textView:text]){
+            [self computeFormatCommnad:text];
             return;
         }
-        if([self computeDeallocCommnad:text]){
+        if([self isCurrentLineIsOnlyText:@"@dealloc" textView:text]){
+            [self computeDeallocCommnad:text];
             return;
         }
     }
+}
+-(BOOL)isCurrentLineIsOnlyText:(NSString*)text textView:(NSTextView*)textView
+{
+    NSString *string = [textView string];
+    if([string length] == 0 || textView.selectedRange.location >= string.length){
+        return NO;
+    }
+    NSRange leftRange = [string rangeOfCharacterFromSet:[NSCharacterSet newlineCharacterSet] options:NSBackwardsSearch range:NSMakeRange(0, textView.selectedRange.location)];
+    NSRange rightRange = [string rangeOfCharacterFromSet:[NSCharacterSet newlineCharacterSet] options:NSCaseInsensitiveSearch range:NSMakeRange(textView.selectedRange.location, string.length - textView.selectedRange.location)];
+    if(leftRange.location != NSNotFound && rightRange.location != NSNotFound && [[[string substringWithRange:NSMakeRange(leftRange.location, rightRange.location - leftRange.location)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] isEqualToString:text]){
+        return YES;
+    }
+    return NO;
 }
 
 -(BOOL)computeFormatCommnad:(NSTextView*)text
@@ -92,6 +108,7 @@
     return NO;
 }
 
+
 -(BOOL)computeDeallocCommnad:(NSTextView*)text
 {
     NSString *deallocCommand = @"@dealloc";
@@ -100,15 +117,21 @@
         [textString replaceCharactersInRange:NSMakeRange(text.selectedRange.location - deallocCommand.length, deallocCommand.length) withString:@""];
         NSRange usedRange = NSMakeRange(text.selectedRange.location - deallocCommand.length, text.selectedRange.length);
         NSString *deallocString = [DeallocCommond deallocString:textString currentLocation:usedRange.location];
-        if([deallocString length] > 0){
-            if(textString.length > usedRange.location){
-                [textString insertString:deallocString atIndex:usedRange.location];
-            }else{
-                [textString appendString:deallocString];
+        NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
+        NSString *originPBString = [pasteBoard stringForType:NSPasteboardTypeString];
+        [pasteBoard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
+        [pasteBoard setString:deallocString forType:NSStringPboardType];
+        [[KeyboradHelper defaultKeyboradHelper] keyboardDidTap:kVK_Delete flags:kCGEventFlagMaskCommand doneBlock:nil];
+        [[KeyboradHelper defaultKeyboradHelper] keyboardDidTap:kVK_ANSI_V flags:kCGEventFlagMaskCommand doneBlock:nil];
+        [[KeyboradHelper defaultKeyboradHelper] keyboardDidTap:kVK_F20 flags:0 doneBlock:^NSEvent *(NSEvent *event) {
+            if(event.keyCode == kVK_F20){
+                [pasteBoard setString:originPBString forType:NSStringPboardType];
+                text.selectedRange = NSMakeRange(usedRange.location + deallocString.length, 0);
+                [[KeyboradHelper defaultKeyboradHelper] removeMoniter];
+                return nil;
             }
-        }
-        text.string = textString;
-        text.selectedRange = usedRange;
+            return event;
+        }];
         return YES;
     }
     return NO;

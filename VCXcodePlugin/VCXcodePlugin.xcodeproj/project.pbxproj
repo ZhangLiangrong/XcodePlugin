@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1C0A33561ADE510000DD9023 /* VCXcodePlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C0A33551ADE510000DD9023 /* VCXcodePlugin.m */; };
+		1C21D04E1AE79BF900A00F8A /* KeyboradHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C21D04D1AE79BF900A00F8A /* KeyboradHelper.m */; };
 		1C3E18EA1ADF83D700BE8850 /* DeallocCommond.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C3E18E91ADF83D700BE8850 /* DeallocCommond.m */; };
 		1CA1054B1ADE28ED007B4F81 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CA1054A1ADE28ED007B4F81 /* AppKit.framework */; };
 		1CA1054D1ADE2909007B4F81 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CA1054C1ADE2909007B4F81 /* Foundation.framework */; };
@@ -18,6 +19,8 @@
 /* Begin PBXFileReference section */
 		1C0A33541ADE510000DD9023 /* VCXcodePlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VCXcodePlugin.h; sourceTree = "<group>"; };
 		1C0A33551ADE510000DD9023 /* VCXcodePlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCXcodePlugin.m; sourceTree = "<group>"; };
+		1C21D04C1AE79BF900A00F8A /* KeyboradHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyboradHelper.h; sourceTree = "<group>"; };
+		1C21D04D1AE79BF900A00F8A /* KeyboradHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeyboradHelper.m; sourceTree = "<group>"; };
 		1C3455F91ADE26A40081B46E /* VCXcodePlugin.xcplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VCXcodePlugin.xcplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C3455FD1ADE26A40081B46E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1C3E18E81ADF83D700BE8850 /* DeallocCommond.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeallocCommond.h; sourceTree = "<group>"; };
@@ -43,6 +46,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1C21D04B1AE79BE900A00F8A /* KeyboradInterface */ = {
+			isa = PBXGroup;
+			children = (
+				1C21D04C1AE79BF900A00F8A /* KeyboradHelper.h */,
+				1C21D04D1AE79BF900A00F8A /* KeyboradHelper.m */,
+			);
+			path = KeyboradInterface;
+			sourceTree = "<group>";
+		};
 		1C3455F01ADE26A40081B46E = {
 			isa = PBXGroup;
 			children = (
@@ -64,6 +76,7 @@
 		1C3455FB1ADE26A40081B46E /* VCXcodePlugin */ = {
 			isa = PBXGroup;
 			children = (
+				1C21D04B1AE79BE900A00F8A /* KeyboradInterface */,
 				1CE9042E1AE6107C006B741F /* FileInterface */,
 				1CC599FF1ADF657000FE1C8B /* Command */,
 				1C3455FC1ADE26A40081B46E /* Supporting Files */,
@@ -171,6 +184,7 @@
 				1CC59A021ADF658200FE1C8B /* FormatCommand.m in Sources */,
 				1C0A33561ADE510000DD9023 /* VCXcodePlugin.m in Sources */,
 				1CCB41841AE6226E00A51DA1 /* FileSearchHelper.m in Sources */,
+				1C21D04E1AE79BF900A00F8A /* KeyboradHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

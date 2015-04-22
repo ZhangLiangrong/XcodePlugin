@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>DA4BAD70-5A20-42B0-B219-216D12D8138B</string>
 	<key>IDESourceControlProjectName</key>
-	<string>project</string>
+	<string>VCXcodePlugin</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>17CB1A6051BC01FE07CF95A7DC4713563B9CB341</key>
 		<string>https://github.com/ZhangLiangrong/XcodePlugin.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>VCXcodePlugin/VCXcodePlugin.xcodeproj/project.xcworkspace</string>
+	<string>VCXcodePlugin/VCXcodePlugin.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>17CB1A6051BC01FE07CF95A7DC4713563B9CB341</key>
