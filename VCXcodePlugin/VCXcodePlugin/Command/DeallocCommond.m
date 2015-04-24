@@ -207,6 +207,7 @@
     }
     return propertyArray;
 }
+
 +(NSString*)generateDeallocCodeForPropertyArray:(NSArray*)propertyArray varArray:(NSArray*)varArray interfaceName:(NSString*)interfaceName
 {
     if(propertyArray.count > 0  || varArray.count > 0){
@@ -226,7 +227,7 @@
             [code appendString:@"\n"];
         }
         [code appendString:@"\n\t[super dealloc];\n"];
-        [code appendString:@"#endif\n}\n"];
+        [code appendString:@"#endif\n}"];
         return code;
     }
     return nil;

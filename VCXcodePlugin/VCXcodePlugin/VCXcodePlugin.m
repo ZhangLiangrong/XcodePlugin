@@ -108,35 +108,35 @@
     return NO;
 }
 
-
 -(BOOL)computeDeallocCommnad:(NSTextView*)text
 {
     NSString *deallocCommand = @"@dealloc";
     NSMutableString *textString = [NSMutableString stringWithFormat:@"%@",text.string];
     if([textString length] >0 && text.selectedRange.location >= deallocCommand.length && [[textString substringWithRange:NSMakeRange(text.selectedRange.location - deallocCommand.length, deallocCommand.length)] isEqualToString:deallocCommand]){
-        [textString replaceCharactersInRange:NSMakeRange(text.selectedRange.location - deallocCommand.length, deallocCommand.length) withString:@""];
-        NSRange usedRange = NSMakeRange(text.selectedRange.location - deallocCommand.length, text.selectedRange.length);
-        NSString *deallocString = [DeallocCommond deallocString:textString currentLocation:usedRange.location];
+        NSString *deallocString = [DeallocCommond deallocString:textString currentLocation:text.selectedRange.location];
         NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
         NSString *originPBString = [pasteBoard stringForType:NSPasteboardTypeString];
-        [pasteBoard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
-        [pasteBoard setString:deallocString forType:NSStringPboardType];
         [[KeyboradHelper defaultKeyboradHelper] keyboardDidTap:kVK_Delete flags:kCGEventFlagMaskCommand doneBlock:nil];
-        [[KeyboradHelper defaultKeyboradHelper] keyboardDidTap:kVK_ANSI_V flags:kCGEventFlagMaskCommand doneBlock:nil];
-        [[KeyboradHelper defaultKeyboradHelper] keyboardDidTap:kVK_F20 flags:0 doneBlock:^NSEvent *(NSEvent *event) {
-            if(event.keyCode == kVK_F20){
-                [pasteBoard setString:originPBString forType:NSStringPboardType];
-                text.selectedRange = NSMakeRange(usedRange.location + deallocString.length, 0);
-                [[KeyboradHelper defaultKeyboradHelper] removeMoniter];
-                return nil;
-            }
-            return event;
-        }];
+        if([deallocString length] > 0){
+            [pasteBoard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
+            [pasteBoard setString:deallocString forType:NSStringPboardType];
+            [[KeyboradHelper defaultKeyboradHelper] keyboardDidTap:kVK_ANSI_V flags:kCGEventFlagMaskCommand doneBlock:nil];
+            [[KeyboradHelper defaultKeyboradHelper] keyboardDidTap:kVK_F20 flags:0 doneBlock:^NSEvent *(NSEvent *event) {
+                if(event.keyCode == kVK_F20){
+                    [pasteBoard setString:originPBString forType:NSStringPboardType];
+                    [[KeyboradHelper defaultKeyboradHelper] removeMoniter];
+                    return nil;
+                }
+                return event;
+            }];
+        }else{
+            [[KeyboradHelper defaultKeyboradHelper] keyboardDidTap:kVK_Space  flags:0 doneBlock:nil];
+            [[KeyboradHelper defaultKeyboradHelper] removeMoniter];
+        }
         return YES;
     }
     return NO;
 }
-
 @end
 
 
